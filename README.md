@@ -4,6 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![](image/image.png)
+
 ## ✨ 功能特色
 
 - 🔧 **Reverse Alpha Blending** - 使用反向 Alpha 混合演算法還原原始圖片
