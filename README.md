@@ -1,6 +1,6 @@
 # 🍌 Nano Banana Watermark Remover
 
-使用 **Reverse Alpha Blending** 技術移除 Nano Banana 浮水印的純前端工具。
+使用 **Reverse Alpha Blending** 技術移除 Gemini Nano Banana 浮水印的純前端工具。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
