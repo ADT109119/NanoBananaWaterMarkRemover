@@ -87,6 +87,47 @@
     --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.18);
 }
 
+/* Light mode specific overrides for badges and hints */
+[data-theme="light"] .result-badge,
+[data-theme="light"] .result-zoom-hint {
+    background: rgba(0, 0, 0, 0.75);
+    color: #ffffff;
+}
+
+[data-theme="light"] .result-badge.success {
+    color: #4ade80;
+}
+
+[data-theme="light"] .result-badge.no-watermark {
+    color: #fbbf24;
+}
+
+[data-theme="light"] .lightbox-hint {
+    background: rgba(0, 0, 0, 0.85);
+    color: #e0e0e0;
+}
+
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .result-badge,
+    :root:not([data-theme]) .result-zoom-hint {
+        background: rgba(0, 0, 0, 0.75);
+        color: #ffffff;
+    }
+    
+    :root:not([data-theme]) .result-badge.success {
+        color: #4ade80;
+    }
+    
+    :root:not([data-theme]) .result-badge.no-watermark {
+        color: #fbbf24;
+    }
+    
+    :root:not([data-theme]) .lightbox-hint {
+        background: rgba(0, 0, 0, 0.85);
+        color: #e0e0e0;
+    }
+}
+
 /* ===== Reset & Base ===== */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -332,6 +373,62 @@ body {
 .drop-hint {
     font-size: 0.875rem;
     color: var(--text-muted);
+}
+
+/* ===== Usage Steps ===== */
+.usage-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    font-weight: 700;
+    font-size: 0.875rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.step-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.step-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.step-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.step-arrow {
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    flex-shrink: 0;
 }
 
 /* ===== Status Bar ===== */
@@ -1067,6 +1164,20 @@ body {
     
     .drop-zone {
         padding: 3rem 1.5rem;
+    }
+    
+    .usage-steps {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+    
+    .step-arrow {
+        display: none;
+    }
+    
+    .step {
+        width: 100%;
     }
     
     .results-header {

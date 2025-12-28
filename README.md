@@ -75,4 +75,7 @@ This project is under the MIT License. See [LICENSE](https://github.com/ADT10911
 
 ## Credit
 
-特別感謝 [凱文大叔教你寫程式](https://www.facebook.com/profile.php?id=61564137718583) 的貼文與 [GeminiWatermarkRemove](https://github.com/kevintsai1202/GeminiWatermarkRemove) 專案，提供了我製作此專案的靈感。
+特別感謝以下專案與資源：
+
+- [凱文大叔教你寫程式](https://www.facebook.com/profile.php?id=61564137718583) 的貼文與 [GeminiWatermarkRemove](https://github.com/kevintsai1202/GeminiWatermarkRemove) 專案，提供了製作此專案的靈感
+- [gemini-watermark-remover](https://github.com/journey-ad/gemini-watermark-remover) by [journey-ad](https://github.com/journey-ad) - 本專案使用的 mask 圖片來源 (MIT License)
