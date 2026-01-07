@@ -12,6 +12,13 @@
     <meta property="og:image" content="assets/og.png">
     <meta property="og:title" content="Gemini Nano Banana 浮水印移除工具">
     <meta property="og:description" content="使用 Reverse Alpha Blending 技術移除 Nano Banana 浮水印的純前端工具">
+    <meta property="og:url" content="https://banana.the-walking-fish.com/">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#f5c842">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
     <div class="app-container">
@@ -198,7 +205,17 @@
                 <section class="modal-section">
                     <h4>版本資訊</h4>
                     <div class="version-info">
-                        <span class="version-badge">v1.0.0</span>
+                        <span class="version-badge">v1.1.0</span>
+                        <span class="version-date">2026-01-07</span>
+                    </div>
+                    <ul class="changelog">
+                        <li>📱 支援安裝為 PWA 應用程式</li>
+                        <li>⚡ 使用 Web Worker 避免處理時畫面凍結</li>
+                        <li>🎨 圓角滾動條樣式</li>
+                    </ul>
+                    
+                    <div class="version-info" style="margin-top: 1rem;">
+                        <span class="version-badge" style="opacity: 0.7;">v1.0.0</span>
                         <span class="version-date">2025-12-27</span>
                     </div>
                     <ul class="changelog">
@@ -206,8 +223,8 @@
                         <li>🔧 使用 Reverse Alpha Blending 技術</li>
                         <li>📂 批次處理功能</li>
                         <li>🎯 自動偵測 mask 尺寸 (48px / 96px)</li>
-                        <li>🔒 所有處理皆在瀏覽器本地完成，圖片不會上傳至伺服器</li>
-                        <li>📱 響應式設計 - 支援桌面與行動裝置</li>
+                        <li>🔒 所有處理皆在瀏覽器本地完成</li>
+                        <li>📱 響應式設計</li>
                     </ul>
                 </section>
                 

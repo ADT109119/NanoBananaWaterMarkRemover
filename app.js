@@ -57,13 +57,41 @@ const MASK_CONFIGS = [
     { size: 48, path: 'assets/mask_48.png', margin: 32 }
 ];
 
+// ===== Web Worker =====
+let worker = null;
+
 // ===== Initialize =====
 async function init() {
     initTheme();
+    initWorker();
+    registerServiceWorker();
     await loadMasks();
     setupEventListeners();
     fetchGitHubStars();
     console.log('🍌 Nano Banana Watermark Remover initialized');
+}
+
+/**
+ * 初始化 Web Worker
+ */
+function initWorker() {
+    if (window.Worker) {
+        worker = new Worker('worker.js');
+        console.log('🔧 Web Worker initialized');
+    } else {
+        console.warn('Web Workers not supported, using main thread');
+    }
+}
+
+/**
+ * 註冊 Service Worker (PWA)
+ */
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('📱 Service Worker registered'))
+            .catch(err => console.warn('Service Worker registration failed:', err));
+    }
 }
 
 /**
@@ -536,7 +564,7 @@ async function processFiles(files) {
 }
 
 /**
- * 處理單張圖片
+ * 處理單張圖片 (使用 Web Worker)
  * @param {File} file - 圖片檔案
  * @returns {Promise<Object>} 處理結果
  */
@@ -562,35 +590,76 @@ async function processImage(file) {
     // 取得原圖 ImageData
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     
-    // 偵測是否有浮水印
-    const hasWatermark = detectWatermark(imageData, mask, canvas.width, canvas.height);
-    
-    if (!hasWatermark) {
-        // 沒有偵測到浮水印，返回原圖
-        return {
-            filename: file.name,
-            originalName: file.name,
-            blob: originalBlob,
-            originalBlob: originalBlob,
-            width: image.width,
-            height: image.height,
-            maskSize: mask.width,
-            margin: mask.margin,
-            success: true,
-            noWatermark: true
-        };
+    // 使用 Worker 進行偵測和處理
+    if (worker) {
+        // 偵測是否有浮水印
+        const hasWatermark = await detectWatermarkWithWorker(
+            imageData.data, 
+            mask.imageData.data, 
+            mask.width, 
+            mask.height, 
+            mask.margin, 
+            canvas.width, 
+            canvas.height
+        );
+        
+        if (!hasWatermark) {
+            // 沒有偵測到浮水印，返回原圖
+            return {
+                filename: file.name,
+                originalName: file.name,
+                blob: originalBlob,
+                originalBlob: originalBlob,
+                width: image.width,
+                height: image.height,
+                maskSize: mask.width,
+                margin: mask.margin,
+                success: true,
+                noWatermark: true
+            };
+        }
+        
+        // 使用 Worker 執行 Reverse Alpha Blending
+        const processedData = await processImageWithWorker(
+            imageData.data,
+            mask.imageData.data,
+            mask.width,
+            mask.height,
+            mask.margin,
+            canvas.width,
+            canvas.height
+        );
+        
+        // 將結果寫回 canvas
+        const newImageData = new ImageData(processedData, canvas.width, canvas.height);
+        ctx.putImageData(newImageData, 0, 0);
+    } else {
+        // Fallback: 使用主線程處理
+        const hasWatermark = detectWatermark(imageData, mask, canvas.width, canvas.height);
+        
+        if (!hasWatermark) {
+            return {
+                filename: file.name,
+                originalName: file.name,
+                blob: originalBlob,
+                originalBlob: originalBlob,
+                width: image.width,
+                height: image.height,
+                maskSize: mask.width,
+                margin: mask.margin,
+                success: true,
+                noWatermark: true
+            };
+        }
+        
+        reverseAlphaBlend(imageData, mask, canvas.width, canvas.height);
+        ctx.putImageData(imageData, 0, 0);
     }
     
-    // 執行 Reverse Alpha Blending
-    reverseAlphaBlend(imageData, mask, canvas.width, canvas.height);
-    
-    // 將結果寫回 canvas
-    ctx.putImageData(imageData, 0, 0);
-    
-    // 轉換為 Blob (使用 Promise 包裝)
+    // 轉換為 Blob
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
     
-    // 生成檔案名稱：保留原始檔名，加上 "_(watermark removed)" 後綴
+    // 生成檔案名稱
     const baseName = file.name.replace(/\.[^.]+$/, '');
     const outputFilename = `${baseName}_(watermark removed).png`;
     
@@ -606,6 +675,71 @@ async function processImage(file) {
         success: true,
         noWatermark: false
     };
+}
+
+/**
+ * 使用 Worker 偵測浮水印
+ */
+function detectWatermarkWithWorker(imageData, maskData, maskWidth, maskHeight, margin, imgWidth, imgHeight) {
+    return new Promise((resolve) => {
+        const handler = (e) => {
+            if (e.data.type === 'detectResult') {
+                worker.removeEventListener('message', handler);
+                console.log(`🔍 Worker detection: diff=${e.data.debug?.brightnessDiff?.toFixed(1)}`);
+                resolve(e.data.hasWatermark);
+            }
+        };
+        worker.addEventListener('message', handler);
+        
+        // 複製數據以避免 transfer 後無法使用
+        const imgDataCopy = new Uint8ClampedArray(imageData);
+        const maskDataCopy = new Uint8ClampedArray(maskData);
+        
+        worker.postMessage({
+            type: 'detect',
+            data: {
+                imageData: imgDataCopy,
+                maskData: maskDataCopy,
+                maskWidth,
+                maskHeight,
+                margin,
+                imgWidth,
+                imgHeight
+            }
+        });
+    });
+}
+
+/**
+ * 使用 Worker 處理圖片
+ */
+function processImageWithWorker(imageData, maskData, maskWidth, maskHeight, margin, imgWidth, imgHeight) {
+    return new Promise((resolve) => {
+        const handler = (e) => {
+            if (e.data.type === 'processResult') {
+                worker.removeEventListener('message', handler);
+                resolve(new Uint8ClampedArray(e.data.imageData));
+            }
+        };
+        worker.addEventListener('message', handler);
+        
+        // 複製數據給 Worker
+        const imgDataCopy = new Uint8ClampedArray(imageData);
+        const maskDataCopy = new Uint8ClampedArray(maskData);
+        
+        worker.postMessage({
+            type: 'process',
+            data: {
+                imageData: imgDataCopy,
+                maskData: maskDataCopy,
+                maskWidth,
+                maskHeight,
+                margin,
+                imgWidth,
+                imgHeight
+            }
+        });
+    });
 }
 
 /**
@@ -735,8 +869,8 @@ function loadImageFromFile(file) {
 
 /**
  * 根據圖片尺寸選擇合適的 mask
- * 當圖片長寬都大於 1024 時，使用 96px mask
- * 否則使用 48px mask
+ * - 長寬都大於 1024：96px mask
+ * - 其他：48px mask
  * 
  * @param {number} width - 圖片寬度
  * @param {number} height - 圖片高度
@@ -747,7 +881,7 @@ function selectMask(width, height) {
     if (width > 1024 && height > 1024) {
         return state.masks.get(96);
     }
-    // 否則使用 48px mask
+    // 其他使用 48px mask
     return state.masks.get(48);
 }
 

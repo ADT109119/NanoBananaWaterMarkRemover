@@ -139,6 +139,31 @@ html {
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-muted) transparent;
+}
+
+/* ===== Scrollbar Styles ===== */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+    background-clip: content-box;
 }
 
 body {
@@ -1155,11 +1180,16 @@ body {
     }
     
     .title {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
+        flex-wrap: wrap;
     }
     
     .title-icon {
-        font-size: 1.5rem;
+        font-size: 2.5rem;
+        width: 100%;
+        display: block;
+        text-align: center;
+        margin-bottom: 0.25rem;
     }
     
     .drop-zone {
