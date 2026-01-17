@@ -28,7 +28,7 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
                 </svg>
-                <span class="nav-label">Blog</span>
+                <span class="nav-label" data-i18n="blog">Blog</span>
             </a>
             <a href="https://youtube.com/@the_walking_fish" class="nav-link" target="_blank" rel="noopener noreferrer" title="YouTube">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -37,7 +37,40 @@
                 <span class="nav-label">YouTube</span>
             </a>
             <div class="nav-divider"></div>
-            <button class="nav-link theme-toggle" id="themeToggle" title="切換主題">
+            <!-- Language Selector -->
+            <div class="lang-selector">
+                <button class="nav-link lang-toggle" id="langToggle" data-i18n-title="language">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+                    </svg>
+                    <span class="current-lang">繁體中文</span>
+                    <svg class="lang-arrow" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
+                </button>
+                <div class="lang-dropdown" id="langDropdown">
+                    <button class="lang-option" data-lang="zh-TW">繁體中文</button>
+                    <button class="lang-option" data-lang="zh-CN">简体中文</button>
+                    <button class="lang-option" data-lang="en">English</button>
+                    <button class="lang-option" data-lang="ja">日本語</button>
+                    <button class="lang-option" data-lang="ko">한국어</button>
+                    <button class="lang-option" data-lang="es">Español</button>
+                    <button class="lang-option" data-lang="fr">Français</button>
+                    <button class="lang-option" data-lang="de">Deutsch</button>
+                    <button class="lang-option" data-lang="it">Italiano</button>
+                    <button class="lang-option" data-lang="pt">Português</button>
+                    <button class="lang-option" data-lang="ru">Русский</button>
+                    <button class="lang-option" data-lang="ar">العربية</button>
+                    <button class="lang-option" data-lang="hi">हिन्दी</button>
+                    <button class="lang-option" data-lang="th">ภาษาไทย</button>
+                    <button class="lang-option" data-lang="vi">Tiếng Việt</button>
+                    <button class="lang-option" data-lang="id">Bahasa Indonesia</button>
+                    <button class="lang-option" data-lang="nl">Nederlands</button>
+                    <button class="lang-option" data-lang="pl">Polski</button>
+                </div>
+            </div>
+            <div class="nav-divider"></div>
+            <button class="nav-link theme-toggle" id="themeToggle" data-i18n-title="toggleTheme" title="切換主題">
                 <svg class="theme-icon sun" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
                 </svg>
@@ -63,9 +96,9 @@
         <header class="header">
             <h1 class="title">
                 <span class="title-icon">🍌</span>
-                Gemini Nano Banana 浮水印移除工具
+                <span data-i18n="title">Gemini Nano Banana 浮水印移除工具</span>
             </h1>
-            <p class="subtitle">使用 Reverse Alpha Blending 技術 <strong>無損</strong>移除浮水印· 純前端計算</p>
+            <p class="subtitle" data-i18n="subtitle">使用 Reverse Alpha Blending 技術 <strong>無損</strong>移除浮水印· 純前端計算</p>
         </header>
 
         <main class="main-content">
@@ -79,8 +112,8 @@
                             <line x1="12" y1="3" x2="12" y2="15"/>
                         </svg>
                     </div>
-                    <p class="drop-text">拖放圖片到這裡，或點擊選擇檔案</p>
-                    <p class="drop-hint">支援 PNG、JPG 格式，可批次上傳</p>
+                    <p class="drop-text" data-i18n="dropText">拖放圖片到這裡，或點擊選擇檔案</p>
+                    <p class="drop-hint" data-i18n="dropHint">支援 PNG、JPG 格式，可批次上傳</p>
                     <input type="file" id="fileInput" accept="image/png,image/jpeg" multiple hidden>
                 </div>
             </div>
@@ -90,24 +123,24 @@
                 <div class="step">
                     <div class="step-number">1</div>
                     <div class="step-content">
-                        <div class="step-title">上傳圖片</div>
-                        <div class="step-desc">拖放或點擊選擇帶有浮水印的圖片</div>
+                        <div class="step-title" data-i18n="step1Title">上傳圖片</div>
+                        <div class="step-desc" data-i18n="step1Desc">拖放或點擊選擇帶有浮水印的圖片</div>
                     </div>
                 </div>
                 <div class="step-arrow">→</div>
                 <div class="step">
                     <div class="step-number">2</div>
                     <div class="step-content">
-                        <div class="step-title">自動處理</div>
-                        <div class="step-desc">系統自動偵測並移除浮水印</div>
+                        <div class="step-title" data-i18n="step2Title">自動處理</div>
+                        <div class="step-desc" data-i18n="step2Desc">系統自動偵測並移除浮水印</div>
                     </div>
                 </div>
                 <div class="step-arrow">→</div>
                 <div class="step">
                     <div class="step-number">3</div>
                     <div class="step-content">
-                        <div class="step-title">下載結果</div>
-                        <div class="step-desc">預覽並下載處理完成的圖片</div>
+                        <div class="step-title" data-i18n="step3Title">下載結果</div>
+                        <div class="step-desc" data-i18n="step3Desc">預覽並下載處理完成的圖片</div>
                     </div>
                 </div>
             </div>
@@ -115,7 +148,7 @@
             <!-- Processing Status -->
             <div class="status-bar" id="statusBar" hidden>
                 <div class="status-info">
-                    <span class="status-text" id="statusText">處理中...</span>
+                    <span class="status-text" id="statusText" data-i18n="processing">處理中...</span>
                     <span class="status-count" id="statusCount">0 / 0</span>
                 </div>
                 <div class="progress-bar">
@@ -126,14 +159,14 @@
             <!-- Results Grid -->
             <div class="results-section" id="resultsSection" hidden>
                 <div class="results-header">
-                    <h2 class="results-title">處理結果</h2>
+                    <h2 class="results-title" data-i18n="results">處理結果</h2>
                     <div class="results-actions">
                         <button class="btn btn-secondary" id="clearBtn">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="3 6 5 6 21 6"/>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                             </svg>
-                            清除全部
+                            <span data-i18n="clearAll">清除全部</span>
                         </button>
                         <button class="btn btn-primary" id="downloadAllBtn">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -141,7 +174,7 @@
                                 <polyline points="7 10 12 15 17 10"/>
                                 <line x1="12" y1="15" x2="12" y2="3"/>
                             </svg>
-                            下載全部
+                            <span data-i18n="downloadAll">下載全部</span>
                         </button>
                     </div>
                 </div>
@@ -156,11 +189,11 @@
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
-                所有處理皆在瀏覽器本地完成，圖片不會上傳至伺服器
+                <span data-i18n="privacyNote">所有處理皆在瀏覽器本地完成，圖片不會上傳至伺服器</span>
             </div>
             
             <div class="footer-author">
-                <span class="author-name">Made by The walking fish 步行魚</span>
+                <span class="author-name" data-i18n="madeBy">Made by The walking fish 步行魚</span>
                 <div class="author-links">
                     <a href="https://github.com/ADT109119" target="_blank" rel="noopener noreferrer" title="GitHub">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -177,7 +210,7 @@
                             <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
                         </svg>
                     </a>
-                    <button class="info-btn" id="infoBtn" title="詳細資訊">
+                    <button class="info-btn" id="infoBtn" data-i18n-title="detailInfo" title="詳細資訊">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
                         </svg>
@@ -203,9 +236,18 @@
             </div>
             <div class="modal-content">
                 <section class="modal-section">
-                    <h4>版本資訊</h4>
+                    <h4 data-i18n="versionInfo">版本資訊</h4>
                     <div class="version-info">
-                        <span class="version-badge">v1.1.0</span>
+                        <span class="version-badge">v1.2.0</span>
+                        <span class="version-date">2026-01-17</span>
+                    </div>
+                    <ul class="changelog">
+                        <li>🌍 新增支援多國語言(目前支援 18 種語言)</li>
+                        <li>🔔 處理完成 Toast 通知</li>
+                    </ul>
+                    
+                    <div class="version-info" style="margin-top: 1rem;">
+                        <span class="version-badge" style="opacity: 0.7;">v1.1.0</span>
                         <span class="version-date">2026-01-07</span>
                     </div>
                     <ul class="changelog">
@@ -229,7 +271,7 @@
                 </section>
                 
                 <section class="modal-section">
-                    <h4>授權條款</h4>
+                    <h4 data-i18n="license">授權條款</h4>
                     <div class="license-box">
                         <p><strong>MIT License</strong></p>
                         <p>Copyright © 2025 The walking fish 步行魚</p>
@@ -270,13 +312,13 @@
             </button>
             <div class="lightbox-image-container" id="lightboxImageContainer">
                 <img src="" alt="" class="lightbox-image" id="lightboxImage">
-                <div class="lightbox-hint" id="lightboxHint">點擊圖片切換 原圖 / 處理後</div>
+                <div class="lightbox-hint" id="lightboxHint" data-i18n="lightboxHint">點擊圖片切換 原圖 / 處理後</div>
             </div>
             <div class="lightbox-info">
                 <div class="lightbox-filename" id="lightboxFilename"></div>
                 <div class="lightbox-toggle">
-                    <button class="toggle-btn active" id="toggleProcessed">處理後</button>
-                    <button class="toggle-btn" id="toggleOriginal">原圖</button>
+                    <button class="toggle-btn active" id="toggleProcessed" data-i18n="processed">處理後</button>
+                    <button class="toggle-btn" id="toggleOriginal" data-i18n="original">原圖</button>
                 </div>
             </div>
             <div class="lightbox-nav">
@@ -294,6 +336,10 @@
         </div>
     </div>
 
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="i18n.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

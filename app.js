@@ -47,7 +47,9 @@ const DOM = {
     lightboxPrev: document.getElementById('lightboxPrev'),
     lightboxNext: document.getElementById('lightboxNext'),
     // Theme toggle
-    themeToggle: document.getElementById('themeToggle')
+    themeToggle: document.getElementById('themeToggle'),
+    // Toast container
+    toastContainer: document.getElementById('toastContainer')
 };
 
 // ===== Mask Configuration =====
@@ -526,7 +528,7 @@ async function processFiles(files) {
     const total = files.length;
     
     for (const file of files) {
-        updateStatus(`處理中: ${file.name}`, processed, total);
+        updateStatus(typeof translate === 'function' ? translate('processingFile', { filename: file.name }) : `處理中: ${file.name}`, processed, total);
         
         try {
             const result = await processImage(file);
@@ -550,9 +552,26 @@ async function processFiles(files) {
         updateProgress(processed / total);
     }
     
-    updateStatus('處理完成', total, total);
+    updateStatus(typeof translate === 'function' ? translate('completed') : '處理完成', total, total);
     state.isProcessing = false;
     showResults();
+    
+    // Show completion toast
+    const successCount = state.processedImages.filter(r => r.success).length;
+    const failCount = state.processedImages.length - successCount;
+    if (typeof translate === 'function') {
+        if (failCount > 0) {
+            showToast(translate('toastPartial', { success: successCount, fail: failCount }), 'warning');
+        } else {
+            showToast(translate('toastSuccess', { count: successCount }), 'success');
+        }
+    } else {
+        if (failCount > 0) {
+            showToast(`處理完成：${successCount} 張成功，${failCount} 張失敗`, 'warning');
+        } else {
+            showToast(`處理完成：${successCount} 張圖片已處理`, 'success');
+        }
+    }
     
     // Reset file input
     DOM.fileInput.value = '';
@@ -956,6 +975,44 @@ function reverseAlphaBlend(imageData, mask, imgWidth, imgHeight) {
     }
 }
 
+// ===== Toast Functions =====
+
+/**
+ * 顯示 Toast 通知
+ * @param {string} message - 訊息內容
+ * @param {string} type - 類型 ('success', 'error', 'warning', 'info')
+ * @param {number} duration - 顯示時間 (ms), 預設 3000
+ */
+function showToast(message, type = 'success', duration = 3000) {
+    if (!DOM.toastContainer) return;
+    
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    // 根據類型選擇圖示
+    const icons = {
+        success: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+        error: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+        warning: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+        info: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+    };
+    
+    toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || icons.info}</span>
+        <span class="toast-message">${message}</span>
+    `;
+    
+    DOM.toastContainer.appendChild(toast);
+    
+    // 自動移除
+    setTimeout(() => {
+        toast.classList.add('removing');
+        setTimeout(() => {
+            toast.remove();
+        }, 150);
+    }, duration);
+}
+
 // ===== UI Functions =====
 
 function showStatus() {
@@ -993,8 +1050,13 @@ function addResultCard(result) {
         
         // 根據是否有浮水印顯示不同的 badge
         const badgeClass = result.noWatermark ? 'no-watermark' : 'success';
-        const badgeText = result.noWatermark ? '⚠ 未偵測到浮水印' : '✓ 完成';
-        const statusNote = result.noWatermark ? ' · 原圖' : '';
+        const badgeText = result.noWatermark 
+            ? (typeof translate === 'function' ? translate('badgeNoWatermark') : '⚠ 未偵測到浮水印')
+            : (typeof translate === 'function' ? translate('badgeSuccess') : '✓ 完成');
+        const statusNote = result.noWatermark 
+            ? ` · ${typeof translate === 'function' ? translate('originalImage') : '原圖'}`
+            : '';
+        const downloadText = typeof translate === 'function' ? translate('download') : '下載';
         
         card.innerHTML = `
             <div class="result-image-container clickable">
@@ -1019,7 +1081,7 @@ function addResultCard(result) {
                             <polyline points="7 10 12 15 17 10"/>
                             <line x1="12" y1="15" x2="12" y2="3"/>
                         </svg>
-                        下載
+                        ${downloadText}
                     </button>
                 </div>
             </div>
