@@ -309,6 +309,7 @@ body {
     align-items: center;
     gap: 0.375rem;
     cursor: pointer;
+    border: none;
 }
 
 .current-lang {
