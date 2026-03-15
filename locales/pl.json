@@ -31,6 +31,8 @@
     "processed": "Przetworzony",
     "original": "Oryginał",
     "toastSuccess": "Ukończono: {count} obrazów przetworzonych",
-    "toastPartial": "Ukończono: {success} udanych, {fail} nieudanych",
-    "language": "Język"
+    "toastPartial": "Przetwarzanie zakończone: {success} sukces, {fail} błąd",
+    "language": "Język",
+    "forceRemove": "Wymuś usunięcie",
+    "forceRemoveDesc": "Wymuś usunięcie znaku wodnego, nawet jeśli nie został wykryty (przydatne w przypadku błędów wykrywania)"
 }

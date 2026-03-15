@@ -32,5 +32,7 @@
     "original": "原图",
     "toastSuccess": "处理完成：{count} 张图片已处理",
     "toastPartial": "处理完成：{success} 张成功，{fail} 张失败",
-    "language": "语言"
+    "language": "语言",
+    "forceRemove": "强制移除",
+    "forceRemoveDesc": "即便未检测到水印也进行计算 (适用于检测失败时)"
 }

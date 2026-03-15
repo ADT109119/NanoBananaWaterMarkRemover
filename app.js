@@ -8,6 +8,7 @@ const state = {
     masks: new Map(), // Map<size, {image, canvas, ctx, imageData, margin}>
     processedImages: [],
     isProcessing: false,
+    forceRemove: false,
     // Lightbox state
     lightbox: {
         isOpen: false,
@@ -49,7 +50,9 @@ const DOM = {
     // Theme toggle
     themeToggle: document.getElementById('themeToggle'),
     // Toast container
-    toastContainer: document.getElementById('toastContainer')
+    toastContainer: document.getElementById('toastContainer'),
+    // Settings
+    forceRemoveToggle: document.getElementById('forceRemoveToggle')
 };
 
 // ===== Mask Configuration =====
@@ -359,6 +362,14 @@ function setupEventListeners() {
     if (DOM.themeToggle) {
         DOM.themeToggle.addEventListener('click', toggleTheme);
     }
+
+    // Force remove toggle
+    if (DOM.forceRemoveToggle) {
+        DOM.forceRemoveToggle.addEventListener('change', (e) => {
+            state.forceRemove = e.target.checked;
+            console.log(`🔧 Force remove: ${state.forceRemove}`);
+        });
+    }
 }
 
 // ===== Modal Functions =====
@@ -622,8 +633,8 @@ async function processImage(file) {
             canvas.height
         );
         
-        if (!hasWatermark) {
-            // 沒有偵測到浮水印，返回原圖
+        if (!hasWatermark && !state.forceRemove) {
+            // 沒有偵測到浮水印，且未開啟強制移除，返回原圖
             return {
                 filename: file.name,
                 originalName: file.name,
@@ -656,7 +667,7 @@ async function processImage(file) {
         // Fallback: 使用主線程處理
         const hasWatermark = detectWatermark(imageData, mask, canvas.width, canvas.height);
         
-        if (!hasWatermark) {
+        if (!hasWatermark && !state.forceRemove) {
             return {
                 filename: file.name,
                 originalName: file.name,

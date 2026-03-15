@@ -31,6 +31,8 @@
     "processed": "Đã xử lý",
     "original": "Gốc",
     "toastSuccess": "Hoàn thành: {count} hình ảnh đã xử lý",
-    "toastPartial": "Hoàn thành: {success} thành công, {fail} thất bại",
-    "language": "Ngôn ngữ"
+    "toastPartial": "Xử lý hoàn tất: {success} thành công, {fail} thất bại",
+    "language": "Ngôn ngữ",
+    "forceRemove": "Bắt buộc xóa",
+    "forceRemoveDesc": "Bắt buộc xóa hình mờ ngay cả khi không phát hiện thấy (hữu ích khi việc phát hiện thất bại)"
 }

@@ -32,5 +32,7 @@
     "original": "原圖",
     "toastSuccess": "處理完成：{count} 張圖片已處理",
     "toastPartial": "處理完成：{success} 張成功，{fail} 張失敗",
-    "language": "語言"
+    "language": "語言",
+    "forceRemove": "強制移除",
+    "forceRemoveDesc": "即便未偵測到浮水印也進行計算 (適用於偵測失敗時)"
 }

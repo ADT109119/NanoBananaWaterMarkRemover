@@ -31,6 +31,8 @@
     "processed": "처리 후",
     "original": "원본",
     "toastSuccess": "완료: {count}개 이미지 처리됨",
-    "toastPartial": "완료: {success}개 성공, {fail}개 실패",
-    "language": "언어"
+    "toastPartial": "처리 완료: {success}개 성공, {fail}개 실패",
+    "language": "언어",
+    "forceRemove": "강제 제거",
+    "forceRemoveDesc": "워터마크가 감지되지 않더라도 강제로 제거 계산 수행 (감지 실패 시 유용)"
 }

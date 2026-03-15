@@ -32,5 +32,7 @@
     "original": "Original",
     "toastSuccess": "Concluído: {count} imagens processadas",
     "toastPartial": "Concluído: {success} bem-sucedidas, {fail} falharam",
-    "language": "Idioma"
+    "language": "Idioma",
+    "forceRemove": "Remover à Força",
+    "forceRemoveDesc": "Forçar a remoção da marca d'água mesmo que não seja detectada (útil para falhas de detecção)"
 }

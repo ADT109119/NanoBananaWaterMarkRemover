@@ -31,6 +31,8 @@
     "processed": "Diproses",
     "original": "Asli",
     "toastSuccess": "Selesai: {count} gambar diproses",
-    "toastPartial": "Selesai: {success} berhasil, {fail} gagal",
-    "language": "Bahasa"
+    "toastPartial": "Pemrosesan selesai: {success} berhasil, {fail} gagal",
+    "language": "Bahasa",
+    "forceRemove": "Hapus Paksa",
+    "forceRemoveDesc": "Paksa penghapusan tanda air meskipun tidak terdeteksi (berguna untuk kegagalan deteksi)"
 }

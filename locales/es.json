@@ -31,6 +31,8 @@
     "processed": "Procesado",
     "original": "Original",
     "toastSuccess": "Completado: {count} imágenes procesadas",
-    "toastPartial": "Completado: {success} exitosas, {fail} fallidas",
-    "language": "Idioma"
+    "toastPartial": "Procesamiento completado: {success} éxito, {fail} error",
+    "language": "Idioma",
+    "forceRemove": "Eliminación forzada",
+    "forceRemoveDesc": "Forzar la eliminación de la marca de agua incluso si no se detecta (útil para fallos de detección)"
 }

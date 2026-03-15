@@ -31,6 +31,8 @@
     "processed": "प्रोसेस्ड",
     "original": "मूल",
     "toastSuccess": "पूर्ण: {count} चित्र प्रोसेस हुए",
-    "toastPartial": "पूर्ण: {success} सफल, {fail} असफल",
-    "language": "भाषा"
+    "toastPartial": "संसाधन पूर्ण: {success} सफल, {fail} विफल",
+    "language": "भाषा",
+    "forceRemove": "जबरन हटाएँ",
+    "forceRemoveDesc": "वॉटरमार्क न मिलने पर भी उसे जबरन हटाएँ (पहचान विफल होने पर उपयोगी)"
 }

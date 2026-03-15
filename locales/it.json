@@ -31,6 +31,8 @@
     "processed": "Elaborato",
     "original": "Originale",
     "toastSuccess": "Completato: {count} immagini elaborate",
-    "toastPartial": "Completato: {success} riuscite, {fail} fallite",
-    "language": "Lingua"
+    "toastPartial": "Elaborazione completata: {success} riuscito, {fail} fallito",
+    "language": "Lingua",
+    "forceRemove": "Rimozione Forzata",
+    "forceRemoveDesc": "Forza la rimozione della filigrana anche se non rilevata (utile per errori di rilevamento)"
 }

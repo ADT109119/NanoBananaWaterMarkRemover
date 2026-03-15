@@ -31,6 +31,8 @@
     "processed": "Traité",
     "original": "Original",
     "toastSuccess": "Terminé: {count} images traitées",
-    "toastPartial": "Terminé: {success} réussies, {fail} échouées",
-    "language": "Langue"
+    "toastPartial": "Traitement terminé : {success} succès, {fail} échec",
+    "language": "Langue",
+    "forceRemove": "Suppression forcée",
+    "forceRemoveDesc": "Forcer la suppression du filigrane même s'il n'est pas détecté (utile en cas d'échec de détection)"
 }

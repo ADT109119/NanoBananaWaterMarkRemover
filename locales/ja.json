@@ -31,6 +31,8 @@
     "processed": "処理後",
     "original": "元画像",
     "toastSuccess": "完了：{count}枚の画像を処理しました",
-    "toastPartial": "完了：{success}枚成功、{fail}枚失敗",
-    "language": "言語"
+    "toastPartial": "処理完了：{success} 件成功、{fail} 件失敗",
+    "language": "言語",
+    "forceRemove": "強制削除",
+    "forceRemoveDesc": "透かしが検出されない場合でも強制的に削除計算を行う (検出失敗時に有効)"
 }

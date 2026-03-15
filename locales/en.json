@@ -31,6 +31,8 @@
     "processed": "Processed",
     "original": "Original",
     "toastSuccess": "Completed: {count} images processed",
-    "toastPartial": "Completed: {success} succeeded, {fail} failed",
-    "language": "Language"
+    "toastPartial": "Processing completed: {success} succeeded, {fail} failed",
+    "language": "Language",
+    "forceRemove": "Force Remove",
+    "forceRemoveDesc": "Force watermark removal even if not detected (useful for detection failures)"
 }

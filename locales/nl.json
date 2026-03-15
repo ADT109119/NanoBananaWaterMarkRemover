@@ -31,6 +31,8 @@
     "processed": "Verwerkt",
     "original": "Origineel",
     "toastSuccess": "Voltooid: {count} afbeeldingen verwerkt",
-    "toastPartial": "Voltooid: {success} geslaagd, {fail} mislukt",
-    "language": "Taal"
+    "toastPartial": "Verwerking voltooid: {success} geslaagd, {fail} mislukt",
+    "language": "Taal",
+    "forceRemove": "Geforceerd verwijderen",
+    "forceRemoveDesc": "Watermerk geforceerd verwijderen, zelfs als het niet wordt gedetecteerd (nuttig bij detectiefouten)"
 }

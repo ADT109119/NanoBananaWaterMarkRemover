@@ -31,6 +31,8 @@
     "processed": "معالج",
     "original": "الأصلي",
     "toastSuccess": "اكتمل: تمت معالجة {count} صورة",
-    "toastPartial": "اكتمل: {success} نجحت، {fail} فشلت",
-    "language": "اللغة"
+    "toastPartial": "اكتملت المعالجة: {success} نجاح، {fail} فشل",
+    "language": "اللغة",
+    "forceRemove": "إزالة إجبارية",
+    "forceRemoveDesc": "فرض إزالة العلامة المائية حتى لو لم يتم اكتشافها (مفيدة في حالات فشل الاكتشاف)"
 }

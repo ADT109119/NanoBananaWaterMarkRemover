@@ -118,6 +118,22 @@
                 </div>
             </div>
 
+            <!-- Settings Section -->
+            <div class="settings-section">
+                <label class="setting-item" for="forceRemoveToggle">
+                    <div class="setting-content">
+                        <div class="setting-title">
+                            <span data-i18n="forceRemove">強制移除</span>
+                        </div>
+                        <div class="setting-desc" data-i18n="forceRemoveDesc">即便未偵測到浮水印也進行計算 (適用於偵測失敗時)</div>
+                    </div>
+                    <div class="switch">
+                        <input type="checkbox" id="forceRemoveToggle">
+                        <span class="slider round"></span>
+                    </div>
+                </label>
+            </div>
+
             <!-- Usage Steps -->
             <div class="usage-steps">
                 <div class="step">
@@ -238,17 +254,16 @@
                 <section class="modal-section">
                     <h4 data-i18n="versionInfo">版本資訊</h4>
                     <div class="version-info">
-                        <span class="version-badge">v1.2.0</span>
-                        <span class="version-date">2026-01-17</span>
+                        <span class="version-badge">v1.3.0</span>
+                        <span class="version-date">2026-03-15</span>
                     </div>
                     <ul class="changelog">
-                        <li>🌍 新增支援多國語言(目前支援 18 種語言)</li>
-                        <li>🔔 處理完成 Toast 通知</li>
+                        <li>⚡ 新增「強制移除」功能，在偵測失敗時可手動強制去浮水印</li>
                     </ul>
                     
                     <div class="version-info" style="margin-top: 1rem;">
-                        <span class="version-badge" style="opacity: 0.7;">v1.1.0</span>
-                        <span class="version-date">2026-01-07</span>
+                        <span class="version-badge" style="opacity: 0.7;">v1.2.0</span>
+                        <span class="version-date">2026-01-17</span>
                     </div>
                     <ul class="changelog">
                         <li>📱 支援安裝為 PWA 應用程式</li>

@@ -31,6 +31,8 @@
     "processed": "ประมวลผลแล้ว",
     "original": "ต้นฉบับ",
     "toastSuccess": "เสร็จสมบูรณ์: ประมวลผล {count} รูปภาพ",
-    "toastPartial": "เสร็จสมบูรณ์: {success} สำเร็จ, {fail} ล้มเหลว",
-    "language": "ภาษา"
+    "toastPartial": "การประมวลผลเสร็จสมบูรณ์: สำเร็จ {success}, ล้มเหลว {fail}",
+    "language": "ภาษา",
+    "forceRemove": "บังคับลบ",
+    "forceRemoveDesc": "บังคับลบลายน้ำแม้ว่าจะตรวจไม่พบ (มีประโยชน์เมื่อการตรวจจับล้มเหลว)"
 }

@@ -32,5 +32,7 @@
     "original": "Original",
     "toastSuccess": "Abgeschlossen: {count} Bilder verarbeitet",
     "toastPartial": "Abgeschlossen: {success} erfolgreich, {fail} fehlgeschlagen",
-    "language": "Sprache"
+    "language": "Sprache",
+    "forceRemove": "Erzwingen entfernen",
+    "forceRemoveDesc": "Erzwungene Entfernung des Wasserzeichens, auch wenn keins erkannt wurde (nützlich bei Erkennungsfehlern)"
 }

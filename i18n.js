@@ -50,7 +50,9 @@ const EMBEDDED_TRANSLATIONS = {
         lightboxHint: '點擊圖片切換 原圖 / 處理後', processed: '處理後', original: '原圖',
         toastSuccess: '處理完成：{count} 張圖片已處理',
         toastPartial: '處理完成：{success} 張成功，{fail} 張失敗',
-        language: '語言'
+        language: '語言',
+        forceRemove: '強制移除',
+        forceRemoveDesc: '即便未偵測到浮水印也進行計算 (適用於偵測失敗時)'
     },
     'en': {
         title: 'Gemini Nano Banana Watermark Remover',
@@ -71,7 +73,9 @@ const EMBEDDED_TRANSLATIONS = {
         lightboxHint: 'Click image to toggle Original / Processed', processed: 'Processed', original: 'Original',
         toastSuccess: 'Completed: {count} images processed',
         toastPartial: 'Completed: {success} succeeded, {fail} failed',
-        language: 'Language'
+        language: 'Language',
+        forceRemove: 'Force Remove',
+        forceRemoveDesc: 'Force watermark removal even if not detected (useful for detection failures)'
     }
 };
 
