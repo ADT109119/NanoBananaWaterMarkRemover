@@ -1,6 +1,6 @@
-# 🍌 Nano Banana Watermark Remover
+# 🍌 Gemini Nano Banana Watermark Remover / 浮水印移除工具
 
-使用 **Reverse Alpha Blending** 技術移除 Gemini Nano Banana 浮水印的純前端工具。
+使用 **Reverse Alpha Blending** 技術移除 Gemini Nano Banana 與 Gemini Omni 影片/圖片浮水印的純前端本地工具。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -8,20 +8,24 @@
 
 ## ✨ 功能特色
 
-- 🔧 **Reverse Alpha Blending** - 使用反向 Alpha 混合演算法還原原始圖片
-- 📂 **批次處理** - 支援多張圖片同時上傳處理
-- 🎯 **自動偵測** - 根據圖片尺寸自動選擇合適的 mask (48px / 96px)
+- 🔧 **Reverse Alpha Blending** - 使用反向 Alpha 混合演算法還原原始圖片及影片訊號
+- 🎬 **影片浮水印移除** - 支援 MP4 與 WebM 影片格式，能無損移除右下角影片浮水印，且**保留原始音軌**
+- ⚙️ **實時影片預覽與參數微調** - 在啟動影片轉換前，可透過預覽視窗即時調整浮水印強度、邊距（預設 72px）與強制移除設定，並即時預覽第一幀處理畫面
+- 📂 **批次處理** - 支援多張圖片/影片同時上傳與非同步佇列處理
+- 🎯 **自動偵測** - 根據媒體尺寸自動適配最佳的遮罩 (18px / 48px / 96px)
 - ⚡ **強制移除** - 支援手動強制移除功能，解決特殊場景偵測失敗的問題
-- 🔒 **隱私保護** - 所有處理皆在瀏覽器本地完成，圖片不會上傳至伺服器
-- 📱 **響應式設計** - 支援桌面與行動裝置
+- 🌐 **18 國語言支援** - 整合國際化 (i18n) 模組，可自動切換或手動選擇 18 種語言介面
+- 📶 **PWA 離線支援** - 部署 Service Worker 快取，支援離線環境下使用與本地安裝應用程式
+- 🔒 **隱私保護** - 100% 純前端本地處理，所有檔案皆在瀏覽器內部進行計算，絕不上傳至任何伺服器
 
 ## 🚀 使用方式
 
-1. 開啟網頁
-2. 拖放或點擊上傳帶有 Nano Banana 浮水印的圖片
-3. 等待處理完成
-4. (可選)點擊圖片預覽處理後的圖片，並比較與原始圖片的差異
-5. 下載處理後的圖片
+1. 開啟網頁（支援離線使用）
+2. 拖放或點擊上傳帶有浮水印的圖片或影片
+3. 影片上傳時，若啟用「影片轉換預覽」，系統會跳出預覽視窗提供自訂邊距與強度調整
+4. 點擊「開始轉換」或等待自動圖片處理完成
+5. 可點擊卡片開啟燈箱（Lightbox）預覽處理後的結果並與原圖進行對比
+6. 下載單一處理結果，或點擊「下載全部」匯出所有成果
 
 ## 🔬 技術原理
 
@@ -36,20 +40,28 @@ Original = (Composite - Watermark × α) / (1 - α)
 ```
 
 其中：
-- `Composite` = 帶有浮水印的圖片
-- `Original` = 原始圖片 (我們要還原的目標)
+- `Composite` = 帶有浮水印的圖片/影片影格
+- `Original` = 原始無水印媒體 (我們要還原的目標)
 - `Watermark` = 浮水印圖案 (白色)
-- `α` = 浮水印透明度 (從 mask 亮度提取)
+- `α` = 浮水印透明度 (從 mask 亮度提取，可手動調整強度)
+
+為了避免影片轉換時造成的 UI 凍結，本專案將核心圖像處理邏輯移至 **Web Worker** 線程進行非同步計算。
 
 ## 📁 專案結構
 
 ```
 NanoBananaWaterMarkRemover/
-├── index.html      # 主頁面
-├── styles.css      # 樣式表
-├── app.js          # 核心邏輯
+├── index.html      # 主網頁結構
+├── styles.css      # 現代感響應式樣式表
+├── app.js          # 主線程邏輯與 UI 互動控制器
+├── worker.js       # Web Worker 非同步圖像與影片影格處理核心
+├── i18n.js         # 18 國語言載入與翻譯控制模組
+├── locales/        # 各語言翻譯 JSON 檔 (zh-TW, en, ja, ko 等)
+├── manifest.json   # PWA 設定檔
+├── sw.js           # Service Worker 快取與離線策略
 ├── README.md       # 說明文件
 └── assets/
+    ├── mask_18.png # 18x18 浮水印遮罩
     ├── mask_48.png # 48x48 浮水印遮罩
     └── mask_96.png # 96x96 浮水印遮罩
 ```
@@ -69,7 +81,6 @@ http://localhost:3000
 你可以透過以下方式與我聯絡
 
 - [Email: 2.jerry32262686@gmail.com](mailto:2.jerry32262686@gmail.com)
-...
 
 ## License
 This project is under the MIT License. See [LICENSE](https://github.com/ADT109119/NanoBananaWaterMarkRemover/blob/main/LICENSE) for further details.
