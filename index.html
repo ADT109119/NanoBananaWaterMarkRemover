@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gemini Nano Banana 浮水印移除工具</title>
-    <meta name="description" content="使用 Reverse Alpha Blending 技術移除 Nano Banana 浮水印的純前端工具">
+    <meta name="description" content="使用 Reverse Alpha Blending 技術無損移除 Gemini Nano Banana 與 Gemini Omni 影片及圖片浮水印的純前端工具，100% 本地處理保護隱私。">
     <link rel="stylesheet" href="styles.css?v=20260315">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <meta property="og:image" content="assets/og.png">
     <meta property="og:title" content="Gemini Nano Banana 浮水印移除工具">
-    <meta property="og:description" content="使用 Reverse Alpha Blending 技術移除 Nano Banana 浮水印的純前端工具">
+    <meta property="og:description" content="使用 Reverse Alpha Blending 技術無損移除 Gemini Nano Banana 與 Gemini Omni 影片及圖片浮水印的純前端工具，100% 本地處理保護隱私。">
     <meta property="og:url" content="https://banana.the-walking-fish.com/">
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
@@ -114,13 +114,25 @@
                     </div>
                     <p class="drop-text" data-i18n="dropText">拖放圖片到這裡，或點擊選擇檔案</p>
                     <p class="drop-hint" data-i18n="dropHint">支援 PNG、JPG 格式，可批次上傳</p>
-                    <input type="file" id="fileInput" accept="image/png,image/jpeg" multiple hidden>
+                    <input type="file" id="fileInput" accept="image/png,image/jpeg,video/mp4,video/webm,video/quicktime" multiple hidden>
                 </div>
             </div>
 
             <!-- Settings Section -->
-            <div class="settings-section">
-                <label class="setting-item" for="forceRemoveToggle">
+            <div class="settings-section" style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; align-items: stretch;">
+                <label class="setting-item" for="videoPreviewToggle" style="margin: 0; display: flex; align-items: center; justify-content: space-between; min-width: 280px; max-width: 360px;">
+                    <div class="setting-content">
+                        <div class="setting-title">
+                            <span data-i18n="videoPreview">影片轉換預覽</span>
+                        </div>
+                        <div class="setting-desc" data-i18n="videoPreviewDesc">上傳影片時彈出預覽視窗以調整邊距與強度</div>
+                    </div>
+                    <div class="switch">
+                        <input type="checkbox" id="videoPreviewToggle" checked>
+                        <span class="slider round"></span>
+                    </div>
+                </label>
+                <label class="setting-item" for="forceRemoveToggle" style="margin: 0; display: flex; align-items: center; justify-content: space-between; min-width: 280px; max-width: 360px;">
                     <div class="setting-content">
                         <div class="setting-title">
                             <span data-i18n="forceRemove">強制移除</span>
@@ -132,6 +144,26 @@
                         <span class="slider round"></span>
                     </div>
                 </label>
+                <div class="setting-item" style="cursor: default; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 0.375rem; min-width: 280px; max-width: 360px; margin: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="setting-title" data-i18n="watermarkMargin">浮水印邊距</span>
+                        <span id="marginValue" class="setting-title" style="color: var(--accent-primary);" data-i18n="auto">自動</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <input type="range" id="marginSlider" min="0" max="150" value="0" style="flex: 1; accent-color: var(--accent-primary); cursor: pointer; height: 6px; outline: none; border-radius: 3px;">
+                    </div>
+                    <span class="setting-desc" data-i18n="watermarkMarginDesc">調整右下角邊距 (0 表示自動)</span>
+                </div>
+                <div class="setting-item" style="cursor: default; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 0.375rem; min-width: 280px; max-width: 360px; margin: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="setting-title" data-i18n="watermarkOpacity">浮水印強度</span>
+                        <span id="opacityValue" class="setting-title" style="color: var(--accent-primary);" data-i18n="auto">自動</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <input type="range" id="opacitySlider" min="0" max="200" value="0" style="flex: 1; accent-color: var(--accent-primary); cursor: pointer; height: 6px; outline: none; border-radius: 3px;">
+                    </div>
+                    <span class="setting-desc" data-i18n="watermarkOpacityDesc">調整混色透明度強度 (0 表示自動)</span>
+                </div>
             </div>
 
             <!-- Usage Steps -->
@@ -236,6 +268,68 @@
         </footer>
     </div>
 
+    <!-- Video Preview Modal -->
+    <div class="modal-overlay" id="videoPreviewModal" hidden>
+        <div class="modal" style="max-width: 640px;">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <span data-i18n="videoPreviewTitle">影片轉換預覽</span>
+                </h3>
+                <button class="modal-close" id="videoPreviewClose">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-content" style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="video-preview-container" style="position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius-md); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <canvas id="modalPreviewCanvas" style="max-width: 100%; max-height: 100%; object-fit: contain;"></canvas>
+                </div>
+                
+                <div class="modal-settings" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <!-- Margin Slider inside Modal -->
+                    <div class="setting-item" style="cursor: default; display: flex; flex-direction: column; align-items: stretch; gap: 0.25rem; margin: 0; background: var(--bg-tertiary); padding: 0.75rem; border-radius: var(--radius-md);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="setting-title" data-i18n="watermarkMargin">浮水印邊距</span>
+                            <span id="modalMarginValue" class="setting-title" style="color: var(--accent-primary);">72 px</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <input type="range" id="modalMarginSlider" min="0" max="150" value="72" style="flex: 1; accent-color: var(--accent-primary); cursor: pointer; height: 6px; outline: none; border-radius: 3px;">
+                        </div>
+                    </div>
+                    
+                    <!-- Opacity Slider inside Modal -->
+                    <div class="setting-item" style="cursor: default; display: flex; flex-direction: column; align-items: stretch; gap: 0.25rem; margin: 0; background: var(--bg-tertiary); padding: 0.75rem; border-radius: var(--radius-md);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="setting-title" data-i18n="watermarkOpacity">浮水印強度</span>
+                            <span id="modalOpacityValue" class="setting-title" style="color: var(--accent-primary);">60%</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <input type="range" id="modalOpacitySlider" min="0" max="200" value="60" style="flex: 1; accent-color: var(--accent-primary); cursor: pointer; height: 6px; outline: none; border-radius: 3px;">
+                        </div>
+                    </div>
+
+                    <!-- Force Remove Toggle inside Modal -->
+                    <label class="setting-item" for="modalForceRemoveToggle" style="margin: 0; display: flex; align-items: center; justify-content: space-between; background: var(--bg-tertiary); padding: 0.75rem; border-radius: var(--radius-md); box-sizing: border-box; cursor: pointer;">
+                        <div class="setting-content">
+                            <div class="setting-title" data-i18n="forceRemove">強制移除</div>
+                        </div>
+                        <div class="switch">
+                            <input type="checkbox" id="modalForceRemoveToggle">
+                            <span class="slider round"></span>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="modal-actions" style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+                    <button id="modalCancelBtn" class="btn btn-secondary" style="padding: 0.5rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: transparent; color: var(--text-primary); cursor: pointer;" data-i18n="cancel">取消</button>
+                    <button id="modalConvertBtn" class="btn btn-primary" style="padding: 0.5rem 1.25rem; border-radius: var(--radius-md); border: none; background: var(--accent-primary); color: white; font-weight: 500; cursor: pointer;" data-i18n="startConversion">開始轉換</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Info Modal -->
     <div class="modal-overlay" id="infoModal" hidden>
         <div class="modal">
@@ -254,7 +348,17 @@
                 <section class="modal-section">
                     <h4 data-i18n="versionInfo">版本資訊</h4>
                     <div class="version-info">
-                        <span class="version-badge">v1.3.0</span>
+                        <span class="version-badge">v1.4.0</span>
+                        <span class="version-date">2026-05-24</span>
+                    </div>
+                    <ul class="changelog">
+                        <li>🎬 支援影片浮水印移除功能（實時處理，支援 WebM/MP4）</li>
+                        <li>🔊 支援影片處理時保留原始音軌</li>
+                        <li>⚡ 針對影片處理進行局部區域計算最佳化，效能大幅提升</li>
+                    </ul>
+                    
+                    <div class="version-info" style="margin-top: 1rem;">
+                        <span class="version-badge" style="opacity: 0.7;">v1.3.0</span>
                         <span class="version-date">2026-03-15</span>
                     </div>
                     <ul class="changelog">
@@ -327,6 +431,7 @@
             </button>
             <div class="lightbox-image-container" id="lightboxImageContainer">
                 <img src="" alt="" class="lightbox-image" id="lightboxImage">
+                <video src="" class="lightbox-image" id="lightboxVideo" loop controls muted playsinline style="display: none;"></video>
                 <div class="lightbox-hint" id="lightboxHint" data-i18n="lightboxHint">點擊圖片切換 原圖 / 處理後</div>
             </div>
             <div class="lightbox-info">

@@ -1,7 +1,7 @@
 {
   "name": "Gemini Nano Banana 浮水印移除工具",
   "short_name": "Banana Remover",
-  "description": "使用 Reverse Alpha Blending 技術無損移除 Gemini Nano Banana 浮水印",
+  "description": "使用 Reverse Alpha Blending 技術無損移除 Gemini Nano Banana 與 Gemini Omni 影片/圖片浮水印",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0f",

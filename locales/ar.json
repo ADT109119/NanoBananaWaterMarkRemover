@@ -1,7 +1,7 @@
 {
     "title": "مزيل العلامة المائية Gemini Nano Banana",
-    "subtitle": "إزالة العلامات المائية <strong>بدون فقدان</strong> باستخدام Reverse Alpha Blending · معالجة من جانب العميل",
-    "metaDescription": "أداة من جانب العميل لإزالة العلامات المائية Nano Banana باستخدام تقنية Reverse Alpha Blending",
+    "subtitle": "قم بإزالة العلامات المائية للفيديو/الصور لـ Gemini Nano Banana و Gemini Omni <strong>بدون خسارة للجودة</strong> باستخدام Reverse Alpha Blending · محلي 100%",
+    "metaDescription": "أداة تعمل بالكامل في المتصفح لإزالة العلامات المائية للفيديو والصور لـ Gemini Nano Banana و Gemini Omni بدون خسارة للجودة باستخدام Reverse Alpha Blending. معالجة محلية 100% لحماية الخصوصية.",
     "blog": "المدونة",
     "toggleTheme": "تبديل السمة",
     "dropText": "اسحب وأفلت الصور هنا، أو انقر للاختيار",
@@ -34,5 +34,18 @@
     "toastPartial": "اكتملت المعالجة: {success} نجاح، {fail} فشل",
     "language": "اللغة",
     "forceRemove": "إزالة إجبارية",
-    "forceRemoveDesc": "فرض إزالة العلامة المائية حتى لو لم يتم اكتشافها (مفيدة في حالات فشل الاكتشاف)"
+    "forceRemoveDesc": "فرض إزالة العلامة المائية حتى لو لم يتم اكتشافها (مفيدة في حالات فشل الاكتشاف)",
+    "watermarkMargin": "هامش العلامة المائية",
+    "watermarkMarginDesc": "ضبط الهامش السفلي الأيمن (0 للتلقائي)",
+    "auto": "تلقائي",
+    "watermarkOpacity": "شدة العلامة المائية",
+    "watermarkOpacityDesc": "ضبط شدة دمج ألفا (0 للتلقائي)",
+    "videoPreviewBadge": "وضع المعاينة",
+    "startConversion": "بدء التحويل",
+    "customSettings": "الإعدادات المخصصة",
+    "customSettingsDesc": "ضبط المعلمات المتقدمة يدويًا مثل هامش العلامة المائية وكثافتها",
+    "videoPreview": "معاينة تحويل الفيديو",
+    "videoPreviewDesc": "إظهار نافذة معاينة لضبط الهامش والكثافة عند تحميل الفيديو",
+    "videoPreviewTitle": "معاينة تحويل الفيديو",
+    "cancel": "إلغاء"
 }

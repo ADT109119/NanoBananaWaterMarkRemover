@@ -120,7 +120,7 @@ function detectWatermark(data) {
  * 執行 Reverse Alpha Blending
  */
 function processImage(data) {
-    const { imageData, maskData, maskWidth, maskHeight, margin, imgWidth, imgHeight } = data;
+    const { imageData, maskData, maskWidth, maskHeight, margin, imgWidth, imgHeight, opacityMultiplier } = data;
     
     const imgPixels = imageData;
     const maskPixels = maskData;
@@ -140,7 +140,8 @@ function processImage(data) {
             const imgIdx = (imgY * imgWidth + imgX) * 4;
             const maskIdx = (my * maskWidth + mx) * 4;
             
-            const alpha = maskPixels[maskIdx + 3] / 255;
+            const multiplier = opacityMultiplier !== undefined ? opacityMultiplier : 1.0;
+            const alpha = (maskPixels[maskIdx + 3] / 255) * multiplier;
             
             if (alpha > 0.001) {
                 const invAlpha = 1 - alpha;
