@@ -3,7 +3,7 @@
  * 提供離線支援和快取策略
  */
 
-const CACHE_NAME = 'banana-remover-v1.4.5';
+const CACHE_NAME = 'banana-remover-v1.5.0';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',

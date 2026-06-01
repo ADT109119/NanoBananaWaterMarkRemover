@@ -951,7 +951,7 @@ function detectWatermarkVideo(video, mask) {
 }
 
 /**
- * 取得瀏覽器支援的影片錄製 MIME 格式
+ * 取得瀏覽器支援的影片錄製 MIME 格式 (MediaRecorder fallback 用)
  */
 function getSupportedVideoMimeType() {
     const types = [
@@ -970,18 +970,365 @@ function getSupportedVideoMimeType() {
 }
 
 /**
- * 處理單個影片檔案 (使用 MediaRecorder & Canvas API 實時處理)
+ * 檢測是否支援 WebCodecs API
+ */
+function supportsWebCodecs() {
+    return typeof VideoEncoder !== 'undefined' &&
+           typeof VideoDecoder !== 'undefined' &&
+           typeof VideoFrame !== 'undefined' &&
+           typeof Mp4Muxer !== 'undefined';
+}
+
+/**
+ * 推算影片幀率
+ */
+async function estimateFrameRate(video) {
+    return new Promise((resolve) => {
+        if (!video.requestVideoFrameCallback) {
+            resolve(30);
+            return;
+        }
+        
+        let frames = [];
+        let callbackId = null;
+        let resolved = false;
+        
+        const cleanUpAndResolve = (fps) => {
+            if (resolved) return;
+            resolved = true;
+            video.pause();
+            if (video.cancelVideoFrameCallback && callbackId !== null) {
+                video.cancelVideoFrameCallback(callbackId);
+            }
+            clearTimeout(timeoutId);
+            resolve(fps);
+        };
+        
+        const timeoutId = setTimeout(() => {
+            // 逾時處理：以收集到的幀計算
+            if (frames.length >= 2) {
+                const first = frames[0];
+                const last = frames[frames.length - 1];
+                const timeDiff = last - first;
+                const frameDiff = frames.length - 1;
+                if (timeDiff > 0 && frameDiff > 0) {
+                    const est = frameDiff / timeDiff;
+                    const commonRates = [23.976, 24, 25, 29.97, 30, 50, 59.94, 60];
+                    let closest = 30;
+                    let minDiff = Infinity;
+                    for (let rate of commonRates) {
+                        let d = Math.abs(est - rate);
+                        if (d < minDiff) {
+                            minDiff = d;
+                            closest = rate;
+                        }
+                    }
+                    cleanUpAndResolve(closest);
+                    return;
+                }
+            }
+            cleanUpAndResolve(30);
+        }, 500);
+        
+        const onFrame = (now, metadata) => {
+            if (resolved) return;
+            frames.push(metadata.mediaTime);
+            if (frames.length >= 10 || metadata.mediaTime >= 0.3) {
+                let fps = 30;
+                if (frames.length >= 2) {
+                    const first = frames[0];
+                    const last = frames[frames.length - 1];
+                    const timeDiff = last - first;
+                    const frameDiff = frames.length - 1;
+                    if (timeDiff > 0 && frameDiff > 0) {
+                        const est = frameDiff / timeDiff;
+                        const commonRates = [23.976, 24, 25, 29.97, 30, 50, 59.94, 60];
+                        let closest = 30;
+                        let minDiff = Infinity;
+                        for (let rate of commonRates) {
+                            let d = Math.abs(est - rate);
+                            if (d < minDiff) {
+                                minDiff = d;
+                                closest = rate;
+                            }
+                        }
+                        fps = closest;
+                    }
+                }
+                cleanUpAndResolve(fps);
+            } else {
+                callbackId = video.requestVideoFrameCallback(onFrame);
+            }
+        };
+        
+        callbackId = video.requestVideoFrameCallback(onFrame);
+        video.muted = true;
+        video.play().catch(() => {
+            cleanUpAndResolve(30);
+        });
+    });
+}
+
+/**
+ * 處理單個影片檔案 (自動選擇 WebCodecs 或 MediaRecorder)
  */
 async function processVideo(file, processed, total, card = null) {
+    if (supportsWebCodecs()) {
+        console.log('🎬 Using WebCodecs + mp4-muxer pipeline');
+        return processVideoWebCodecs(file, processed, total, card);
+    } else {
+        console.log('🎬 Falling back to MediaRecorder pipeline');
+        return processVideoMediaRecorder(file, processed, total, card);
+    }
+}
+
+/**
+ * 處理影片 - WebCodecs + mp4-muxer 管線 (零掉幀、標準 MP4 輸出)
+ */
+async function processVideoWebCodecs(file, processed, total, card = null) {
     const video = document.createElement('video');
     video.src = URL.createObjectURL(file);
     video.muted = true;
     video.playsInline = true;
-    video.style.position = 'absolute';
-    video.style.width = '0';
-    video.style.height = '0';
-    video.style.opacity = '0';
-    video.style.pointerEvents = 'none';
+    video.preload = 'auto';
+    video.style.cssText = 'position:absolute;width:0;height:0;opacity:0;pointer-events:none';
+    document.body.appendChild(video);
+
+    await new Promise((resolve, reject) => {
+        video.onloadedmetadata = () => resolve();
+        video.onerror = () => reject(new Error('載入影片失敗'));
+    });
+    // 確保影片已完全載入足夠資料
+    await new Promise((resolve) => {
+        if (video.readyState >= 2) return resolve();
+        video.onloadeddata = () => resolve();
+    });
+
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+    const duration = video.duration;
+
+    // 選擇合適的 mask
+    const mask = selectMask(vw, vh);
+    if (!mask) {
+        document.body.removeChild(video);
+        throw new Error('找不到合適的 mask');
+    }
+
+    const activeMargin = state.customMargin > 0 ? state.customMargin : 72;
+    const activeOpacityMultiplier = state.customOpacity > 0 ? (state.customOpacity / 100) : 0.6;
+    const activeMask = { ...mask, margin: activeMargin, opacityMultiplier: activeOpacityMultiplier };
+
+    // 偵測浮水印 (在影片中段取一幀)
+    const targetTime = Math.min(1.0, duration / 2);
+    video.currentTime = targetTime;
+    await new Promise(resolve => video.addEventListener('seeked', resolve, { once: true }));
+
+    const hasWatermark = detectWatermarkVideo(video, activeMask);
+
+    if (!hasWatermark && !state.forceRemove) {
+        document.body.removeChild(video);
+        return {
+            filename: file.name, originalName: file.name,
+            blob: file, originalBlob: file,
+            width: vw, height: vh, maskSize: mask.width, margin: activeMargin,
+            success: true, noWatermark: true, isVideo: true
+        };
+    }
+
+    // --- 估算幀率 ---
+    const fps = await estimateFrameRate(video);
+    const totalFrames = Math.round(duration * fps);
+    const frameDurationUs = Math.round(1_000_000 / fps); // 每幀微秒數
+
+    // Canvas for frame processing
+    const canvas = document.createElement('canvas');
+    canvas.width = vw;
+    canvas.height = vh;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    // --- 提取與解碼音軌 ---
+    let audioBuffer = null;
+    let hasAudio = false;
+    try {
+        const arrayBuf = await file.arrayBuffer();
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        audioBuffer = await audioCtx.decodeAudioData(arrayBuf);
+        if (audioBuffer && audioBuffer.numberOfChannels > 0 && audioBuffer.length > 0) {
+            hasAudio = true;
+        }
+        audioCtx.close();
+    } catch (e) {
+        console.warn('Audio extraction/decoding skipped or failed:', e.message);
+    }
+
+    const numberOfChannels = hasAudio ? Math.min(audioBuffer.numberOfChannels, 2) : 0;
+    const sampleRate = hasAudio ? audioBuffer.sampleRate : 0;
+
+    // --- 初始化 mp4-muxer ---
+    const muxerOptions = {
+        target: new Mp4Muxer.ArrayBufferTarget(),
+        video: {
+            codec: 'avc',
+            width: vw,
+            height: vh
+        },
+        fastStart: 'in-memory',
+        firstTimestampBehavior: 'offset'
+    };
+    if (hasAudio) {
+        muxerOptions.audio = {
+            codec: 'aac',
+            numberOfChannels: numberOfChannels,
+            sampleRate: sampleRate
+        };
+    }
+    const muxer = new Mp4Muxer.Muxer(muxerOptions);
+
+    // --- 初始化 VideoEncoder ---
+    let encoderError = null;
+    const videoEncoder = new VideoEncoder({
+        output: (chunk, meta) => {
+            muxer.addVideoChunk(chunk, meta);
+        },
+        error: (e) => {
+            console.error('VideoEncoder error:', e);
+            encoderError = e;
+        }
+    });
+
+    // 選擇合適的 H.264 profile：根據解析度
+    const profile = (vw > 1920 || vh > 1080) ? 'avc1.640033' : 'avc1.4d0028';
+    // 根據解析度選擇 bitrate
+    const bitrate = (vw > 1920 || vh > 1080) ? 8_000_000 : 4_000_000;
+
+    videoEncoder.configure({
+        codec: profile,
+        width: vw,
+        height: vh,
+        bitrate: bitrate,
+        framerate: fps,
+        latencyMode: 'quality',
+        avc: { format: 'avc' } // 使用 AVCC 格式 (mp4-muxer 需要)
+    });
+
+    // --- 初始化並編碼音訊 (如果有音軌) ---
+    let audioEncoder = null;
+    if (hasAudio) {
+        audioEncoder = new AudioEncoder({
+            output: (chunk, meta) => {
+                muxer.addAudioChunk(chunk, meta);
+            },
+            error: (e) => console.error('AudioEncoder error:', e)
+        });
+        audioEncoder.configure({
+            codec: 'mp4a.40.2',
+            numberOfChannels: numberOfChannels,
+            sampleRate: sampleRate,
+            bitrate: 128_000
+        });
+
+        const audioLength = audioBuffer.length;
+        const chunkSize = sampleRate; // 每秒一個 chunk
+        for (let offset = 0; offset < audioLength; offset += chunkSize) {
+            const len = Math.min(chunkSize, audioLength - offset);
+            const planarData = new Float32Array(len * numberOfChannels);
+            for (let ch = 0; ch < numberOfChannels; ch++) {
+                const channelData = audioBuffer.getChannelData(ch);
+                planarData.set(channelData.subarray(offset, offset + len), ch * len);
+            }
+            const audioData = new AudioData({
+                format: 'f32-planar',
+                sampleRate: sampleRate,
+                numberOfFrames: len,
+                numberOfChannels: numberOfChannels,
+                timestamp: Math.round((offset / sampleRate) * 1_000_000),
+                data: planarData
+            });
+            audioEncoder.encode(audioData);
+            audioData.close();
+        }
+    }
+
+    // --- 逐幀處理影片 ---
+    video.currentTime = 0;
+    await new Promise(resolve => video.addEventListener('seeked', resolve, { once: true }));
+
+    for (let frameIdx = 0; frameIdx < totalFrames; frameIdx++) {
+        if (encoderError) throw encoderError;
+
+        const seekTime = frameIdx / fps;
+        video.currentTime = seekTime;
+        await new Promise(resolve => video.addEventListener('seeked', resolve, { once: true }));
+
+        ctx.drawImage(video, 0, 0, vw, vh);
+        applyReverseAlphaBlendRegion(ctx, activeMask, vw, vh);
+
+        const frame = new VideoFrame(canvas, {
+            timestamp: frameIdx * frameDurationUs,
+            duration: frameDurationUs
+        });
+
+        // 管理 backpressure
+        while (videoEncoder.encodeQueueSize > 5) {
+            await new Promise(resolve => setTimeout(resolve, 1));
+        }
+
+        videoEncoder.encode(frame, { keyFrame: frameIdx % (fps * 2) === 0 });
+        frame.close();
+
+        // 進度更新
+        const currentRatio = (frameIdx + 1) / totalFrames;
+        updateProgress((processed + currentRatio) / total);
+        if (card) {
+            const percent = Math.min(99, Math.round(currentRatio * 100));
+            const convertBtn = card.querySelector('.result-convert-btn');
+            if (convertBtn) {
+                convertBtn.innerHTML = `
+                    <svg class="spinner" width="14" height="14" viewBox="0 0 50 50" style="animation: spin 1s linear infinite; margin-right: 0.25rem;">
+                        <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="5" stroke-dasharray="80, 200" stroke-dashoffset="0"></circle>
+                    </svg>
+                    ${percent}%
+                `;
+            }
+        }
+    }
+
+    // Flush 並完成
+    await videoEncoder.flush();
+    if (audioEncoder) {
+        await audioEncoder.flush();
+    }
+    muxer.finalize();
+
+    const buffer = muxer.target.buffer;
+    const blob = new Blob([buffer], { type: 'video/mp4' });
+
+    videoEncoder.close();
+    if (audioEncoder) {
+        audioEncoder.close();
+    }
+    document.body.removeChild(video);
+
+    const baseName = file.name.replace(/\.[^.]+$/, '');
+    return {
+        filename: `${baseName}_(watermark removed).mp4`,
+        originalName: file.name,
+        blob, originalBlob: file,
+        width: vw, height: vh, maskSize: mask.width, margin: activeMargin,
+        success: true, noWatermark: false, isVideo: true
+    };
+}
+
+/**
+ * 處理影片 - MediaRecorder 管線 (fallback，用於不支援 WebCodecs 的瀏覽器)
+ */
+async function processVideoMediaRecorder(file, processed, total, card = null) {
+    const video = document.createElement('video');
+    video.src = URL.createObjectURL(file);
+    video.muted = true;
+    video.playsInline = true;
+    video.style.cssText = 'position:absolute;width:0;height:0;opacity:0;pointer-events:none';
     document.body.appendChild(video);
     
     await new Promise((resolve, reject) => {
@@ -1007,7 +1354,6 @@ async function processVideo(file, processed, total, card = null) {
     };
     
     // 偵測是否含有浮水印
-    // 在影片長度的中間或 1 秒處進行偵測，避開開頭黑畫面
     const targetTime = Math.min(1.0, video.duration / 2);
     video.currentTime = targetTime;
     await new Promise(resolve => video.addEventListener('seeked', resolve, { once: true }));
