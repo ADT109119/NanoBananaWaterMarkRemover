@@ -3,13 +3,14 @@
  * 提供離線支援和快取策略
  */
 
-const CACHE_NAME = 'banana-remover-v1.5.0';
+const CACHE_NAME = 'banana-remover-v1.5.1';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
     '/styles.css',
     '/app.js',
     '/worker.js',
+    '/mp4-muxer.min.js',
     '/assets/mask_18.png',
     '/assets/mask_48.png',
     '/assets/mask_96.png',
